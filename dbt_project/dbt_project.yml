@@ -1,0 +1,30 @@
+name: 'ethiopian_medical_data'
+version: '1.0.0'
+config-version: 2
+
+profile: 'medical_data_profile'
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+
+target-path: "target"
+clean-targets:
+    - "target"
+    - "dbt_packages"
+
+models:
+  ethiopian_medical_data:
+    staging:
+      +schema: staging
+      +materialized: view
+    marts:
+      +schema: marts
+      +materialized: table
+
+vars:
+  raw_schema: raw
+  staging_schema: staging
+  marts_schema: marts
