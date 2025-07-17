@@ -1,13 +1,15 @@
 {{
   config(
-    materialized='table'
+    materialized='table',
+    description='Dimension table for Telegram channels.'
   )
 }}
 
-SELECT
-    channel_key,
-    channel_name,
-    first_seen_date,
-    message_count,
-    loaded_at
-FROM {{ ref('stg_telegram_channels') }}
+select
+    id as channel_id,
+    name as channel_name,
+    description as channel_description
+from {{ ref('stg_telegram_channels') }}
+
+-- dbt test: unique and not null
+-- in dbt_project/models/marts/core/schema.yml

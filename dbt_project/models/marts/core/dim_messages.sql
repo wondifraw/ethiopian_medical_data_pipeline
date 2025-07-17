@@ -1,14 +1,8 @@
 {{
   config(
-    materialized='table'
+    materialized='table',
+    description='Dimension table for Telegram messages.'
   )
 }}
 
-SELECT
-    message_key,
-    message_id,
-    channel_name,
-    message_text,
-    has_media,
-    loaded_at
-FROM {{ ref('stg_telegram_messages') }}
+select * from {{ ref('stg_telegram_messages') }}
