@@ -14,9 +14,10 @@ engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 app = FastAPI(
-    title="Ethiopian Medical Business Analytics API",
-    description="API for analyzing Ethiopian medical business data from Telegram",
-    version="1.0.0"
+    title="Ethiopian Medical Data API",
+    description="REST API for accessing processed medical data from Telegram channels. Provides endpoints for messages, channels, and image detections.",
+    version="1.0.0",
+    contact={"name": "Your Name", "email": "your@email.com"}
 )
 
 # CORS middleware
@@ -27,6 +28,21 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.get("/messages/", response_model=list[schemas.Message], tags=["Messages"], summary="Get all messages")
+def get_messages():
+    """Retrieve all processed Telegram messages."""
+    return crud.get_all_messages()
+
+@app.get("/channels/", response_model=list[schemas.Channel], tags=["Channels"], summary="Get all channels")
+def get_channels():
+    """Retrieve all Telegram channels."""
+    return crud.get_all_channels()
+
+@app.get("/image-detections/", response_model=list[schemas.ImageDetection], tags=["Image Detections"], summary="Get all image detections")
+def get_image_detections():
+    """Retrieve all image detections from processed images."""
+    return crud.get_all_image_detections()
 
 @app.get("/api/reports/top-products", response_model=schemas.TopProductsResponse)
 async def get_top_products(limit: int = 10):
