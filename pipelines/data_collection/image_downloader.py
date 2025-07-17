@@ -34,42 +34,31 @@ class ImageDownloader:
         ]
         
     async def download_images(self, channel_name: str, limit: int = 50):
-        """Download images from a Telegram channel.
-        
-        Args:
-            channel_name (str): Name of the Telegram channel
-            limit (int): Maximum number of messages to process
-        """
+        """Download images from a Telegram channel."""
         try:
             logger.info(f"Starting image download from {channel_name}")
-            
-            # Create directory structure matching telegram_scraper.py
             date_str = datetime.now().strftime('%Y-%m-%d')
             clean_channel_name = channel_name.replace('@', '')
             channel_dir = self.data_dir / date_str / clean_channel_name
             channel_dir.mkdir(parents=True, exist_ok=True)
-            
             entity = await self.client.get_entity(channel_name)
-            
             downloaded_count = 0
             async for message in self.client.iter_messages(entity, limit=limit):
-                if message.media and isinstance(message.media, MessageMediaPhoto):
-                    file_path = channel_dir / f"{message.id}.jpg"
-                    if not file_path.exists():
-                        try:
+                try:
+                    if message.media and isinstance(message.media, MessageMediaPhoto):
+                        file_path = channel_dir / f"{message.id}.jpg"
+                        if not file_path.exists():
                             await self.client.download_media(message, file=file_path)
                             downloaded_count += 1
                             logger.debug(f"Downloaded image {file_path.name}")
-                        except Exception as e:
-                            logger.warning(f"Failed to download image {message.id}: {e}")
-            
+                except Exception as e:
+                    logger.warning(f"Failed to download/process image for message {getattr(message, 'id', 'unknown')}: {e}", exc_info=True)
             logger.info(f"Completed image download from {channel_name}: {downloaded_count} images downloaded")
-            
         except FloodWaitError as e:
             logger.error(f"Flood wait error for {channel_name}: {e}")
             await asyncio.sleep(e.seconds)
         except Exception as e:
-            logger.error(f"Error downloading images from {channel_name}: {e}")
+            logger.error(f"Error downloading images from {channel_name}: {e}", exc_info=True)
             raise
             
     async def download_all_images(self):

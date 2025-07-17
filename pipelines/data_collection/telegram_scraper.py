@@ -34,39 +34,30 @@ class TelegramScraper:
         ]
         
     async def scrape_channel(self, channel_name: str):
-        """Scrape messages from a specific Telegram channel.
-        
-        Args:
-            channel_name (str): Name of the Telegram channel to scrape
-        """
+        """Scrape messages from a specific Telegram channel."""
         try:
             logger.info(f"Starting to scrape channel: {channel_name}")
-            
-            # Get the channel entity
             entity = await self.client.get_entity(channel_name)
-            
-            # Collect all messages
             messages = []
             async for message in self.client.iter_messages(entity, limit=100):
-                messages.append({
-                    'id': message.id,
-                    'date': message.date.isoformat(),
-                    'message': message.text,
-                    'views': message.views,
-                    'forwards': message.forwards,
-                    'media': bool(message.media) 
-                })
-
-            # Save to JSON file using the new method
+                try:
+                    messages.append({
+                        'id': message.id,
+                        'date': message.date.isoformat() if message.date else None,
+                        'message': message.text,
+                        'views': message.views,
+                        'forwards': message.forwards,
+                        'media': bool(message.media)
+                    })
+                except Exception as e:
+                    logger.warning(f"Failed to process message {getattr(message, 'id', 'unknown')}: {e}", exc_info=True)
             self.save_to_json(messages, channel_name)
-            
             logger.info(f"Successfully scraped {len(messages)} messages from {channel_name}")
-            
         except FloodWaitError as e:
             logger.error(f"Flood wait error for {channel_name}: {e}")
             await asyncio.sleep(e.seconds)
         except Exception as e:
-            logger.error(f"Error scraping channel {channel_name}: {e}")
+            logger.error(f"Error scraping channel {channel_name}: {e}", exc_info=True)
             raise
 
     def save_to_json(self, data, channel_name):
