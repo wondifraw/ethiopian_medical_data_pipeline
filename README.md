@@ -1,5 +1,7 @@
 # Ethiopian Medical Data Pipeline
 
+![CI](https://github.com/YOUR-USERNAME/ethiopian_medical_data_pipeline/actions/workflows/ci.yml/badge.svg)
+
 ## Overview
 The **Ethiopian Medical Data Pipeline** is a comprehensive, end-to-end data engineering platform designed to automate the collection, processing, analysis, and serving of medical-related data from public Telegram channels. The system is built to support public health monitoring, research, and analytics in the Ethiopian context, but is extensible to other domains and regions.
 
@@ -193,3 +195,16 @@ This project is licensed under the MIT License.
 - [FastAPI](https://fastapi.tiangolo.com/)
 - [Telethon](https://github.com/LonamiWebs/Telethon)
 - [OpenCV](https://opencv.org/) 
+
+---
+
+## Testing
+
+This project uses `pytest` for testing. To run tests and check coverage:
+
+```bash
+pip install pytest pytest-cov
+pytest --cov=src tests/
+```
+
+Add your tests in the `tests/` directory. The CI workflow will automatically run tests and report failures on each push or pull request. 
