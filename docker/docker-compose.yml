@@ -1,0 +1,57 @@
+# No need for version: '3.8' (modern Compose ignores it)
+
+services:
+  web:
+    build: 
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8000:8000"  # FastAPI
+      - "3000:3000"  # Dagster
+    volumes:
+      - ../:/app
+      - ../data:/app/data
+    env_file:
+      - ../.env
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+  db:
+    image: postgres:15
+    # container_name: db_postgres
+    environment:
+      - POSTGRES_HOST=localhost
+      - POSTGRES_USER=dbuser
+      - POSTGRES_PASSWORD=postgres123
+      - POSTGRES_DB=medical_data
+    env_file:
+      - ../.env
+    volumes:
+      - postgres_data1:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+
+  dbt:
+    build: 
+      context: ..
+      dockerfile: docker/Dockerfile
+    volumes:
+      - ../:/app
+    env_file:
+      - ../.env
+    depends_on:
+      - db
+    command: ["bash", "-c", "cd /app/dbt_project && dbt run"]
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres_data1:
