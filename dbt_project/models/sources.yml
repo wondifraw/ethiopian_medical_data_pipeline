@@ -1,0 +1,8 @@
+version: 2
+
+sources:
+  - name: raw
+    database: "{{ env_var('POSTGRES_DB') }}"
+    schema: raw
+    tables:
+      - name: raw_image_detections 
