@@ -1,3 +1,19 @@
+# Object Detection Pipeline
+#
+# This module uses a YOLOv8 model for object detection on medical images scraped from Telegram.
+#
+# Model: YOLOv8 (or specify your model)
+# Model weights are stored in the 'models/' directory.
+#
+# To update/retrain the model:
+# 1. Prepare your training data.
+# 2. Train using your preferred framework (e.g., Ultralytics YOLO, PyTorch).
+# 3. Replace the weights file in 'models/'.
+#
+# Inference is triggered automatically during the data processing pipeline.
+#
+# For more details, see the README section on Machine Learning Integration.
+
 import os
 from pathlib import Path
 from ultralytics import YOLO
