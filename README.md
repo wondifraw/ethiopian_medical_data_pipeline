@@ -1,260 +1,219 @@
 # Ethiopian Medical Data Pipeline
 
-![CI](https://github.com/YOUR-USERNAME/ethiopian_medical_data_pipeline/actions/workflows/ci.yml/badge.svg)
+## 📌 Overview
+The **Ethiopian Medical Data Pipeline** is a modular, end-to-end data engineering platform for collecting, processing, and analyzing health-related content from Telegram channels in Ethiopia. It supports real-time public health surveillance, research data collection, and automated analytics workflows.
 
-## Overview
-The **Ethiopian Medical Data Pipeline** is a comprehensive, end-to-end data engineering platform designed to automate the collection, processing, analysis, and serving of medical-related data from public Telegram channels. The system is built to support public health monitoring, research, and analytics in the Ethiopian context, but is extensible to other domains and regions.
-
-This project leverages modern open-source technologies—**FastAPI**, **Dagster**, **dbt**, **Docker**, and more—to provide a robust, scalable, and reproducible data workflow. It is suitable for data engineers, researchers, and organizations seeking to build reliable data pipelines for social media and medical data.
+Built with modern open-source tools—**FastAPI**, **dbt**, **Dagster**, **Docker**, and more—the pipeline offers scalable and reproducible workflows for medical data projects.
 
 ---
 
-## Motivation
-- **Public Health Surveillance:** Track and analyze health-related discussions and trends in Ethiopian Telegram channels.
-- **Research Enablement:** Provide clean, structured, and queryable data for academic and clinical research.
-- **Automation:** Eliminate manual data collection and processing, ensuring up-to-date datasets.
-- **Extensibility:** Easily adapt the pipeline to new data sources, models, or analytics needs.
+## 🎯 Key Goals
+- ✅ **Public Health Surveillance:** Monitor disease trends and misinformation.
+- ✅ **Automation:** Eliminate manual data collection.
+- ✅ **Data Quality:** Ensure structured, clean, and queryable datasets.
+- ✅ **Research Support:** Enable downstream analysis and ML training.
+- ✅ **Extensibility:** Easily plug into other channels or domains.
 
 ---
 
-## Use Cases
-- Monitoring the spread of medical misinformation or disease outbreaks.
-- Collecting and analyzing pharmaceutical or clinical discussions.
-- Building dashboards for health authorities or NGOs.
-- Training machine learning models on real-world medical conversations and images.
+## 🧠 Use Cases
+- Detect and analyze COVID-19 trends from public groups.
+- Extract pharmaceutical mentions from chat messages.
+- Power analytics dashboards for NGOs and health agencies.
+- Train ML models on annotated medical messages or images.
 
 ---
 
-## Technology Stack
-- **Python 3.10+** — Core programming language
-- **Docker & Docker Compose** — Containerization and orchestration
-- **PostgreSQL** — Relational database for structured data
-- **FastAPI** — High-performance API for serving data
-- **Dagster** — Data pipeline orchestration and scheduling
-- **dbt** — Data transformation and analytics modeling
-- **Telethon** — Telegram scraping
-- **OpenCV** — Image processing and object detection
-- **Pandas, SQLAlchemy** — Data wrangling and database interaction
+## ⚙️ Tech Stack
+| Component     | Tool/Library                |
+|--------------|-----------------------------|
+| Language      | Python 3.10+                |
+| API           | FastAPI                     |
+| Pipeline      | Dagster                     |
+| ETL           | Pandas, SQLAlchemy          |
+| Database      | PostgreSQL                  |
+| Transformation| dbt                         |
+| Scraping      | Telethon                    |
+| CV/Image Proc | OpenCV                      |
+| Containerization | Docker & Docker Compose  |
 
 ---
 
-## Architecture Overview
+## 🧭 Architecture
 
 ```mermaid
 graph TD
-    A[Telegram Channels] -->|Scrape| B[Data Collection (Telethon)]
-    B -->|Raw Messages/Images| C[Data Lake (data/raw)]
-    C -->|Process| D[Data Processing (Pandas, OpenCV)]
-    D -->|Load| E[PostgreSQL Database]
-    E -->|Transform| F[dbt Models]
+    A[Telegram Channels] -->|Scrape| B[Scraper (Telethon)]
+    B -->|Raw Data| C[data/raw/]
+    C -->|Preprocess| D[Pandas & OpenCV]
+    D -->|Load| E[PostgreSQL]
+    E -->|Transform| F[dbt]
     F -->|Serve| G[FastAPI]
     D -->|Orchestrate| H[Dagster]
 ```
 
 ---
 
-## Project Structure
+## 📁 Project Structure
 ```
 ethiopian_medical_data_pipeline/
-├── data/                  # Raw and processed data storage
-├── dbt_project/           # dbt models and configuration
-├── docker/                # Docker and docker-compose files
-├── pipelines/
-│   ├── data_collection/   # Telegram scraping and image downloading
-│   ├── data_processing/   # Database loading and object detection
-│   └── orchestration/     # Dagster pipeline definitions
+├── data/                    # Raw and processed data
+│   └── raw/                 # Stored as YYYY-MM-DD/channelname.json
+├── dbt_project/             # dbt models and tests
+├── docker/                  # Docker config files
+├── pipelines/               # Data pipeline scripts
+│   ├── data_collection/     # Scraping & image downloading
+│   ├── data_processing/     # Database loading
+│   └── orchestration/       # Dagster definitions
 ├── src/
-│   ├── api/               # FastAPI application
-│   └── common/            # Shared config and logging
-├── requirements.txt       # Python dependencies
-└── README.md              # Project documentation
+│   ├── api/                 # FastAPI app
+│   └── common/              # Shared configs, logging
+├── tests/                   # Unit & integration tests
+├── .env.example             # Template for environment variables
+├── .gitignore               # Ensures secrets are not committed
+├── requirements.txt         # Python dependencies
+└── README.md                # Project documentation
 ```
 
 ---
 
-## Getting Started
+## 🚀 Getting Started
 
-### Prerequisites
+### ✅ Prerequisites
 - Python 3.10+
 - Docker & Docker Compose
 - Git
-- Telegram API credentials (get from [my.telegram.org](https://my.telegram.org/))
+- Telegram API credentials ([my.telegram.org](https://my.telegram.org))
 
-### 1. Clone the Repository
+### 🔐 1. Setup Environment Variables
+
+Copy the example:
 ```bash
-git clone https://github.com/YOUR-USERNAME/ethiopian_medical_data_pipeline.git
-cd ethiopian_medical_data_pipeline
+cp .env.example .env
 ```
 
-### 2. Set Up Environment Variables
-
-
-Create a `.env` file in the project root:
+Edit `.env`:
 ```
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=supersecretpassword
 POSTGRES_DB=ethiopian_medical_data
 POSTGRES_HOST=db
 ```
-Add your Telegram API credentials to `src/common/config.py` or as environment variables as needed.
 
-### 3. Build and Start Services with Docker
+> ✅ **Note:** The `.env` file is excluded from version control via `.gitignore` to protect secrets.
+
+---
+
+### 🛠 2. Build and Start with Docker
+
 ```bash
 cd docker
 docker compose up --build
 ```
+
+**Service URLs:**
 - FastAPI: [http://localhost:8000](http://localhost:8000)
 - Dagster UI: [http://localhost:3000](http://localhost:3000)
-- PostgreSQL: localhost:5432
+- PostgreSQL: `localhost:5432`
 
-### 4. Run Data Pipelines
+---
 
-#### Scrape Telegram Messages
-Collects messages from configured Telegram channels and stores them as JSON files.
+## 📡 Data Pipeline Usage
+
+### 🔍 Scrape Telegram Messages
 ```bash
 python pipelines/data_collection/telegram_scraper.py
 ```
 
-#### Download Images
-Downloads images from Telegram messages and stores them in the data lake.
+### 🖼 Download Images from Messages
 ```bash
 python pipelines/data_collection/image_downloader.py
 ```
 
-#### Load Data to Database
-Loads the scraped messages and image metadata into the PostgreSQL database.
+### 🗃 Load JSON and Image Data to PostgreSQL
 ```bash
 python pipelines/data_processing/database_loader.py
 ```
 
-#### Run dbt Transformations
-Transforms raw data into analytics-ready tables and marts.
+### 🧮 Run dbt Transformations
 ```bash
 cd dbt_project
 dbt run
 cd ..
 ```
 
-#### Orchestrate with Dagster
-Manages and schedules the entire pipeline.
+### 🧭 Orchestrate with Dagster
 ```bash
 dagster dev -f pipelines/orchestration/dagster_pipeline.py
 ```
 
 ---
 
-## API Usage
-- Start the API:
-  ```bash
-  uvicorn src.api.main:app --reload
-  ```
-- Visit [http://localhost:8000/docs](http://localhost:8000/docs) for interactive API documentation and testing endpoints.
+## 🌐 API Usage
+
+### Start the FastAPI Server
+```bash
+uvicorn src.api.main:app --reload
+```
+
+### Explore API Documentation
+- Swagger UI: [http://localhost:8000/docs](http://localhost:8000/docs)
 
 ---
 
-## Example Data Flow
-1. **Telegram Scraper** collects messages and images → stores in `data/raw/telegram_messages/` and `data/raw/telegram_images/`.
-2. **Image Downloader** fetches and saves images from messages.
-3. **Database Loader** ingests JSON and image metadata into PostgreSQL.
-4. **dbt** transforms raw tables into analytics-ready models.
-5. **FastAPI** serves the data via REST endpoints.
-6. **Dagster** orchestrates and schedules the above steps.
+## 🔄 Example Workflow Summary
+1. Scraper → JSON in `data/raw/telegram_messages/`
+2. Image downloader → files in `data/raw/telegram_images/`
+3. Loader → data into PostgreSQL
+4. dbt → analytics tables
+5. FastAPI → RESTful API layer
+6. Dagster → automation & scheduling
 
 ---
 
-## Troubleshooting
-- **Postgres container fails to start:** Ensure `.env` file is present and all variables are set.
-- **ModuleNotFoundError:** Run commands from the project root and ensure all `__init__.py` files exist in package folders.
-- **OpenCV DLL errors:** Install the [Microsoft Visual C++ Redistributable](https://aka.ms/vs/17/release/vc_redist.x64.exe) and ensure you are using 64-bit Python.
-- **dbt source not found:** Ensure `sources.yml` is defined in `dbt_project/models/`.
-- **Docker build fails:** Check for missing dependencies in `requirements.txt` and ensure all files are present.
-
----
-
-## Development & Contribution
-1. Fork the repository and create your feature branch:
-   ```bash
-   git checkout -b feature/YourFeature
-   ```
-2. Commit your changes and push:
-   ```bash
-   git add .
-   git commit -m "Add YourFeature"
-   git push origin feature/YourFeature
-   ```
-3. Open a Pull Request on GitHub.
-
-
-
-## Acknowledgements
-- [Dagster](https://dagster.io/)
-- [dbt](https://www.getdbt.com/)
-- [FastAPI](https://fastapi.tiangolo.com/)
-- [Telethon](https://github.com/LonamiWebs/Telethon)
-- [OpenCV](https://opencv.org/) 
-
----
-
-## Testing
-
-This project uses `pytest` for testing. To run tests and check coverage:
+## 🧪 Testing
 
 ```bash
 pip install pytest pytest-cov
 pytest --cov=src tests/
 ```
 
-Add your tests in the `tests/` directory. The CI workflow will automatically run tests and report failures on each push or pull request. 
-## How to Contribute
-
-We welcome contributions! To get started:
-
-1. **Open an Issue:**  
-   If you find a bug or have a feature request, please [open an issue](https://github.com/your-repo/issues) describing the problem or suggestion.
-
-2. **Fork the Repository:**  
-   Click the "Fork" button at the top right of this page to create your own copy of the repository.
-
-3. **Clone Your Fork:**  
-   ```bash
-   git clone https://github.com/your-username/your-repo.git
-   cd your-repo
-   ```
-
-4. **Create a Feature Branch:**  
-   ```bash
-   git checkout -b feature/YourFeature
-   ```
-
-5. **Make Your Changes:**  
-   - Follow the existing code style.
-   - Add or update tests as needed.
-   - Update documentation if applicable.
-
-6. **Run Tests Locally:**  
-   ```bash
-   pip install -r requirements.txt
-   pytest
-   ```
-
-7. **Commit and Push:**  
-   ```bash
-   git add .
-   git commit -m "Describe your changes"
-   git push origin feature/YourFeature
-   ```
-
-8. **Open a Pull Request:**  
-   Go to your fork on GitHub and open a Pull Request to the `main` branch of the original repository. Please describe your changes and reference any related issues.
-
-9. **Code Review:**  
-   Your PR will be reviewed. Please address any feedback and update your PR as needed.
-
-**Thank you for contributing!**
+✅ Ensure new functions have test coverage.
+✅ Tests run on push via GitHub Actions CI.
 
 ---
 
-## License
-This project is licensed under the MIT License.
+## 💡 Troubleshooting
+
+| Issue                          | Solution |
+|-------------------------------|----------|
+| PostgreSQL container fails     | Check `.env` is present and configured |
+| ModuleNotFoundError            | Run scripts from root, verify `__init__.py` |
+| OpenCV DLL errors (Windows)    | Install [VC++ Redistributable](https://aka.ms/vs/17/release/vc_redist.x64.exe) |
+| dbt error: source not found    | Check `sources.yml` in `dbt_project/models/` |
+| Docker fails                   | Rebuild image and check `requirements.txt` |
 
 ---
+
+## 📚 Contributing
+
+### 🛠 Fork & Clone
+```bash
+git clone https://github.com/wondifraw/ethiopian_medical_data_pipeline.git
+cd ethiopian_medical_data_pipeline
+
+```
+
+---
+
+## 🙏 Acknowledgements
+- [FastAPI](https://fastapi.tiangolo.com/)
+- [Dagster](https://dagster.io/)
+- [dbt](https://www.getdbt.com/)
+- [Telethon](https://github.com/LonamiWebs/Telethon)
+- [OpenCV](https://opencv.org/)
+
+---
+
+## 📜 License
+MIT License. 
