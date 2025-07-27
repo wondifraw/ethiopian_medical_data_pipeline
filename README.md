@@ -38,7 +38,6 @@ Built with modern open-source tools—**FastAPI**, **dbt**, **Dagster**, **Docke
 | Containerization | Docker & Docker Compose  |
 
 ---
-
 ## 🧭 Architecture
 
 ```mermaid
@@ -51,7 +50,6 @@ graph TD
     F -->|Serve| G[FastAPI]
     D -->|Orchestrate| H[Dagster]
 ```
-
 ---
 
 ## 📁 Project Structure
