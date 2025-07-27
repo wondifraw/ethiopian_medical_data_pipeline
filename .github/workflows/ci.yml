@@ -61,3 +61,7 @@ jobs:
       - name: Build Docker image
         run: |
           docker build -f docker/Dockerfile -t ethiopian-medical-data-pipeline . 
+          # Run dbt tests to validate data models
+          - name: Run dbt tests
+            run: |
+              if [ -d dbt_project ]; then cd dbt_project && dbt test; else echo "No dbt_project directory"; fi
