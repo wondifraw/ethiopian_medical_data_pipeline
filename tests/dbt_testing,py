@@ -1,0 +1,80 @@
+# Example dbt tests using pytest for dbt artifacts
+
+import os
+import subprocess
+import pytest
+
+DBT_PROJECT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../dbt_project"))
+
+@pytest.mark.parametrize("model,column", [
+    ("dim_channels", "id"),
+    ("dim_dates", "date_id"),
+    ("dim_messages", "message_id"),
+    ("fct_image_detections", "detection_id"),
+    ("fct_messages", "message_id"),
+])
+def test_not_null(model, column):
+    """
+    Test that key columns are not null (dbt's not_null test).
+    """
+    result = subprocess.run(
+        [
+            "dbt", "test",
+            "--select", f"{model}",
+            "--data",
+            "--models", f"{model}",
+            "--profiles-dir", os.path.join(DBT_PROJECT_DIR, "profiles")
+        ],
+        cwd=DBT_PROJECT_DIR,
+        capture_output=True,
+        text=True
+    )
+    assert "FAIL" not in result.stdout, f"not_null test failed for {model}.{column}: {result.stdout}"
+
+@pytest.mark.parametrize("model,column", [
+    ("dim_channels", "id"),
+    ("dim_dates", "date_id"),
+    ("dim_messages", "message_id"),
+    ("fct_image_detections", "detection_id"),
+    ("fct_messages", "message_id"),
+])
+def test_unique(model, column):
+    """
+    Test that key columns are unique (dbt's unique test).
+    """
+    result = subprocess.run(
+        [
+            "dbt", "test",
+            "--select", f"{model}",
+            "--data",
+            "--models", f"{model}",
+            "--profiles-dir", os.path.join(DBT_PROJECT_DIR, "profiles")
+        ],
+        cwd=DBT_PROJECT_DIR,
+        capture_output=True,
+        text=True
+    )
+    assert "FAIL" not in result.stdout, f"unique test failed for {model}.{column}: {result.stdout}"
+
+@pytest.mark.parametrize("model,column,values", [
+    ("dim_channels", "channel_type", ["public", "private"]),
+    ("fct_image_detections", "detection_status", ["success", "failure"]),
+])
+def test_accepted_values(model, column, values):
+    """
+    Test that a column only contains accepted values (dbt's accepted_values test).
+    """
+    # This assumes you have an accepted_values test defined in your dbt models
+    result = subprocess.run(
+        [
+            "dbt", "test",
+            "--select", f"{model}",
+            "--data",
+            "--models", f"{model}",
+            "--profiles-dir", os.path.join(DBT_PROJECT_DIR, "profiles")
+        ],
+        cwd=DBT_PROJECT_DIR,
+        capture_output=True,
+        text=True
+    )
+    assert "FAIL" not in result.stdout, f"accepted_values test failed for {model}.{column}: {result.stdout}"
