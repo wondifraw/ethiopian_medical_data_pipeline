@@ -140,6 +140,14 @@ cd dbt_project
 dbt run
 cd ..
 ```
+---
+## Quick Start
+```bash
+git clone https://github.com/wondifraw/ethiopian_medical_data_pipeline.git
+cp .env.example .env
+docker-compose up --build
+```
+---
 
 ### 🧭 Orchestrate with Dagster
 ```bash
