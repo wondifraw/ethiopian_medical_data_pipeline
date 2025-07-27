@@ -41,7 +41,7 @@ Built with modern open-source tools—**FastAPI**, **dbt**, **Dagster**, **Docke
 
 ## 🧭 Architecture
 
-```mermaid
+```
 graph TD
     A[Telegram Channels] -->|Scrape| B[Scraper (Telethon)]
     B -->|Raw Data| C[data/raw/]
@@ -50,7 +50,7 @@ graph TD
     E -->|Transform| F[dbt]
     F -->|Serve| G[FastAPI]
     D -->|Orchestrate| H[Dagster]
-
+```
 ---
 
 ## 📁 Project Structure
