@@ -10,6 +10,8 @@ sys.path.append(str(Path(__file__).parent.parent.parent))  # Add project root to
 
 from src.common.logger import get_logger
 from src.common.config import settings
+import logging
+logging.basicConfig(filename='logs/scraper.log', level=logging.INFO)
 
 logger = get_logger(__name__)
 
@@ -76,15 +78,19 @@ class TelegramScraper:
         Returns:
             None
         """
-        date_str = datetime.now().strftime('%Y-%m-%d')
-        # Enforce strict naming: YYYY-MM-DD/channel_name.json
-        output_dir = f"data/raw/telegram_messages/{date_str}"
-        os.makedirs(output_dir, exist_ok=True)
-        filename = f"{output_dir}/{channel_name}.json"
-        # Write the messages to a JSON file
-        with open(filename, 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
-        logger.info(f"Saved {len(data)} messages to {filename}")
+        try:
+            date_str = datetime.now().strftime('%Y-%m-%d')
+            # Enforce strict naming: YYYY-MM-DD/channel_name.json
+            output_dir = f"data/raw/telegram_messages/{date_str}"
+            os.makedirs(output_dir, exist_ok=True)
+            filename = f"{output_dir}/{channel_name}.json"
+            # Write the messages to a JSON file
+            with open(filename, 'w', encoding='utf-8') as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+            logger.info(f"Saved {len(data)} messages to {filename}")
+        except Exception as e:
+            logger.error(f"Error saving messages to JSON for channel {channel_name}: {e}", exc_info=True)
+            raise
             
     async def scrape_all_channels(self):
         """Scrape all configured Telegram channels."""
@@ -104,12 +110,21 @@ class TelegramScraper:
 
 def run_scraper():
     """Run the Telegram scraper."""
-    scraper = TelegramScraper()
-    # Run the asynchronous scraping process
-    asyncio.run(scraper.scrape_all_channels())
+    try:
+        scraper = TelegramScraper()
+        # Run the asynchronous scraping process
+        asyncio.run(scraper.scrape_all_channels())
+    except Exception as e:
+        logger.error(f"Error running the Telegram scraper: {e}", exc_info=True)
 
 def main():
-    run_scraper()
+    try:
+        run_scraper()
+    except Exception as e:
+        logger.error(f"Error in main: {e}", exc_info=True)
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        logger.error(f"Unhandled exception in __main__: {e}", exc_info=True)
