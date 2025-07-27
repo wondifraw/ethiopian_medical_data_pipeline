@@ -38,26 +38,31 @@ class ImageDownloader:
         try:
             logger.info(f"Starting image download from {channel_name}")
             date_str = datetime.now().strftime('%Y-%m-%d')
-            clean_channel_name = channel_name.replace('@', '')
+            clean_channel_name = channel_name.replace('@', '')  # Remove '@' if present for folder naming
             channel_dir = self.data_dir / date_str / clean_channel_name
             channel_dir.mkdir(parents=True, exist_ok=True)
             entity = await self.client.get_entity(channel_name)
             downloaded_count = 0
             async for message in self.client.iter_messages(entity, limit=limit):
                 try:
+                    # Check if the message contains a photo
                     if message.media and isinstance(message.media, MessageMediaPhoto):
                         file_path = channel_dir / f"{message.id}.jpg"
+                        # Only download if the file does not already exist
                         if not file_path.exists():
                             await self.client.download_media(message, file=file_path)
                             downloaded_count += 1
                             logger.debug(f"Downloaded image {file_path.name}")
                 except Exception as e:
+                    # Log warning if a single image fails to download/process, but continue
                     logger.warning(f"Failed to download/process image for message {getattr(message, 'id', 'unknown')}: {e}", exc_info=True)
             logger.info(f"Completed image download from {channel_name}: {downloaded_count} images downloaded")
         except FloodWaitError as e:
+            # Handle Telegram API rate limiting
             logger.error(f"Flood wait error for {channel_name}: {e}")
             await asyncio.sleep(e.seconds)
         except Exception as e:
+            # Log and re-raise any other errors
             logger.error(f"Error downloading images from {channel_name}: {e}", exc_info=True)
             raise
             
@@ -66,23 +71,25 @@ class ImageDownloader:
         try:
             logger.info("Starting image download process")
             
+            # Use async context manager for TelegramClient session
             async with self.client:
                 for channel in self.channels:
                     await self.download_images(channel)
                     
             logger.info("Completed image download process")
         except Exception as e:
+            # Log and re-raise any errors during the overall process
             logger.error(f"Error in image download process: {e}")
             raise
 
 def run_image_downloader():
     """Run the image downloader."""
     downloader = ImageDownloader()
-    asyncio.run(downloader.download_all_images())
+    asyncio.run(downloader.download_all_images())  # Run the async download process
 
 def main():
     """Main function to run the image downloader."""
-    run_image_downloader()
+    run_image_downloader()  # Entry point for script execution
 
 if __name__ == "__main__":
-    main()
+    main()  # Run main if script is executed directly

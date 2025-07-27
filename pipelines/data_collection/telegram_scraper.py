@@ -39,8 +39,10 @@ class TelegramScraper:
             logger.info(f"Starting to scrape channel: {channel_name}")
             entity = await self.client.get_entity(channel_name)
             messages = []
+            # Iterate over the last 100 messages in the channel
             async for message in self.client.iter_messages(entity, limit=100):
                 try:
+                    # Extract relevant fields from each message
                     messages.append({
                         'id': message.id,
                         'date': message.date.isoformat() if message.date else None,
@@ -50,13 +52,16 @@ class TelegramScraper:
                         'media': bool(message.media)
                     })
                 except Exception as e:
+                    # Log a warning if a message cannot be processed
                     logger.warning(f"Failed to process message {getattr(message, 'id', 'unknown')}: {e}", exc_info=True)
             self.save_to_json(messages, channel_name)
             logger.info(f"Successfully scraped {len(messages)} messages from {channel_name}")
         except FloodWaitError as e:
+            # Handle Telegram API rate limiting
             logger.error(f"Flood wait error for {channel_name}: {e}")
             await asyncio.sleep(e.seconds)
         except Exception as e:
+            # Log any other errors encountered during scraping
             logger.error(f"Error scraping channel {channel_name}: {e}", exc_info=True)
             raise
 
@@ -76,6 +81,7 @@ class TelegramScraper:
         output_dir = f"data/raw/telegram_messages/{date_str}"
         os.makedirs(output_dir, exist_ok=True)
         filename = f"{output_dir}/{channel_name}.json"
+        # Write the messages to a JSON file
         with open(filename, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
         logger.info(f"Saved {len(data)} messages to {filename}")
@@ -85,18 +91,21 @@ class TelegramScraper:
         try:
             logger.info("Starting Telegram scraping process")
             
+            # Use async context manager for the Telegram client
             async with self.client:
                 for channel in self.channels:
                     await self.scrape_channel(channel)
                     
             logger.info("Completed Telegram scraping process")
         except Exception as e:
+            # Log any errors that occur during the scraping process
             logger.error(f"Error in Telegram scraping process: {e}")
             raise
 
 def run_scraper():
     """Run the Telegram scraper."""
     scraper = TelegramScraper()
+    # Run the asynchronous scraping process
     asyncio.run(scraper.scrape_all_channels())
 
 def main():
