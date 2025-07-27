@@ -1,0 +1,8 @@
+version: 2
+models:
+  - name: stg_messages
+    tests:
+      - unique:
+          column_name: message_id
+  - not_null:
+    column_name: message_text
