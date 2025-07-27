@@ -87,6 +87,8 @@ cd ethiopian_medical_data_pipeline
 ```
 
 ### 2. Set Up Environment Variables
+
+
 Create a `.env` file in the project root:
 ```
 POSTGRES_USER=postgres
@@ -182,12 +184,7 @@ dagster dev -f pipelines/orchestration/dagster_pipeline.py
    ```
 3. Open a Pull Request on GitHub.
 
----
 
-## License
-This project is licensed under the MIT License.
-
----
 
 ## Acknowledgements
 - [Dagster](https://dagster.io/)
@@ -208,3 +205,56 @@ pytest --cov=src tests/
 ```
 
 Add your tests in the `tests/` directory. The CI workflow will automatically run tests and report failures on each push or pull request. 
+## How to Contribute
+
+We welcome contributions! To get started:
+
+1. **Open an Issue:**  
+   If you find a bug or have a feature request, please [open an issue](https://github.com/your-repo/issues) describing the problem or suggestion.
+
+2. **Fork the Repository:**  
+   Click the "Fork" button at the top right of this page to create your own copy of the repository.
+
+3. **Clone Your Fork:**  
+   ```bash
+   git clone https://github.com/your-username/your-repo.git
+   cd your-repo
+   ```
+
+4. **Create a Feature Branch:**  
+   ```bash
+   git checkout -b feature/YourFeature
+   ```
+
+5. **Make Your Changes:**  
+   - Follow the existing code style.
+   - Add or update tests as needed.
+   - Update documentation if applicable.
+
+6. **Run Tests Locally:**  
+   ```bash
+   pip install -r requirements.txt
+   pytest
+   ```
+
+7. **Commit and Push:**  
+   ```bash
+   git add .
+   git commit -m "Describe your changes"
+   git push origin feature/YourFeature
+   ```
+
+8. **Open a Pull Request:**  
+   Go to your fork on GitHub and open a Pull Request to the `main` branch of the original repository. Please describe your changes and reference any related issues.
+
+9. **Code Review:**  
+   Your PR will be reviewed. Please address any feedback and update your PR as needed.
+
+**Thank you for contributing!**
+
+---
+
+## License
+This project is licensed under the MIT License.
+
+---
