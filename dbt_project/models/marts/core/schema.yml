@@ -2,42 +2,96 @@ version: 2
 
 models:
   - name: dim_channels
-    description: "Dimension table for Telegram channels."
+    description: "Dimension table for Telegram channels. Contains metadata and attributes for each channel from which messages are collected."
     columns:
       - name: channel_id
-        description: "Unique channel identifier."
+        description: "Unique identifier for each Telegram channel."
         tests:
           - unique
           - not_null
+      - name: channel_name
+        description: "The display name of the Telegram channel."
+      - name: channel_type
+        description: "Type of the channel (e.g., public, private)."
+      - name: created_at
+        description: "Timestamp when the channel was created."
+      - name: is_verified
+        description: "Boolean flag indicating if the channel is verified."
+
   - name: dim_dates
-    description: "Date dimension for analytics."
+    description: "Date dimension for analytics. Provides a row for each date to support time-based analysis and reporting."
     columns:
       - name: date
-        description: "Date value."
+        description: "Date value in YYYY-MM-DD format."
         tests:
           - unique
           - not_null
+      - name: date_id
+        description: "Surrogate key for the date dimension."
+      - name: year
+        description: "Year component of the date."
+      - name: month
+        description: "Month component of the date."
+      - name: day
+        description: "Day component of the date."
+      - name: day_of_week
+        description: "Day of the week (e.g., Monday, Tuesday)."
+      - name: is_weekend
+        description: "Boolean flag indicating if the date is a weekend."
+
   - name: dim_messages
-    description: "Dimension table for Telegram messages."
+    description: "Dimension table for Telegram messages. Contains metadata and attributes for each message."
     columns:
       - name: message_id
-        description: "Unique message identifier."
+        description: "Unique identifier for each Telegram message."
         tests:
           - unique
           - not_null
+      - name: channel_id
+        description: "Foreign key referencing the channel where the message was posted."
+      - name: posted_at
+        description: "Timestamp when the message was posted."
+      - name: message_text
+        description: "Text content of the message."
+      - name: has_image
+        description: "Boolean flag indicating if the message contains an image."
+      - name: is_forwarded
+        description: "Boolean flag indicating if the message was forwarded from another channel."
+
   - name: fct_image_detections
-    description: "Fact table for image detections."
+    description: "Fact table for image detections. Stores results of object detection performed on images from Telegram messages."
     columns:
       - name: detection_id
-        description: "Unique detection identifier."
+        description: "Unique identifier for each image detection event."
         tests:
           - unique
           - not_null
+      - name: message_id
+        description: "Foreign key referencing the message containing the image."
+      - name: detected_object
+        description: "Name of the object detected in the image."
+      - name: confidence
+        description: "Confidence score of the detection (0-1)."
+      - name: detection_status
+        description: "Status of the detection process (e.g., success, failure)."
+      - name: detected_at
+        description: "Timestamp when the detection was performed."
+
   - name: fct_messages
-    description: "Fact table for Telegram messages."
+    description: "Fact table for Telegram messages. Stores metrics and facts related to messages for analytical purposes."
     columns:
       - name: message_id
-        description: "Unique message identifier."
+        description: "Unique identifier for each Telegram message."
         tests:
           - unique
-          - not_null 
+          - not_null
+      - name: channel_id
+        description: "Foreign key referencing the channel where the message was posted."
+      - name: date
+        description: "Date when the message was posted."
+      - name: word_count
+        description: "Number of words in the message text."
+      - name: image_count
+        description: "Number of images attached to the message."
+      - name: is_important
+        description: "Boolean flag indicating if the message is marked as important."
