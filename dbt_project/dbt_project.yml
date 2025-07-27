@@ -1,30 +1,30 @@
-name: 'ethiopian_medical_data'
-version: '1.0.0'
-config-version: 2
+name: 'ethiopian_medical_data'  # Project name
+version: '1.0.0'  # Project version
+config-version: 2  # dbt config version
 
-profile: 'medical_data_profile'
+profile: 'medical_data_profile'  # Reference to profile in profiles.yml
 
-model-paths: ["models"]
-analysis-paths: ["analyses"]
-test-paths: ["tests"]
-seed-paths: ["seeds"]
-macro-paths: ["macros"]
+model-paths: ["models"]  # Path to model files
+analysis-paths: ["analyses"]  # Path to analysis files
+test-paths: ["tests"]  # Path to test files
+seed-paths: ["seeds"]  # Path to seed files
+macro-paths: ["macros"]  # Path to macro files
 
-target-path: "target"
+target-path: "target"  # Directory for compiled files
 clean-targets:
-    - "target"
-    - "dbt_packages"
+    - "target"  # Clean target directory
+    - "dbt_packages"  # Clean dbt packages directory
 
 models:
   ethiopian_medical_data:
     staging:
-      +schema: staging
-      +materialized: view
+      +schema: staging  # Use 'staging' schema for staging models
+      +materialized: view  # Materialize staging models as views
     marts:
-      +schema: marts
-      +materialized: table
+      +schema: marts  # Use 'marts' schema for marts models
+      +materialized: table  # Materialize marts models as tables
 
 vars:
-  raw_schema: raw
-  staging_schema: staging
-  marts_schema: marts
+  raw_schema: raw  # Variable for raw schema
+  staging_schema: staging  # Variable for staging schema
+  marts_schema: marts  # Variable for marts schema

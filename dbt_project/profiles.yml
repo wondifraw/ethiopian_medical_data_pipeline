@@ -2,13 +2,13 @@ medical_data_profile:
   target: dev
   outputs:
     dev:
-      type: postgres
-      host: "{{ env_var('POSTGRES_HOST') }}"
-      user: "{{ env_var('POSTGRES_USER') }}"
-      password: "{{ env_var('POSTGRES_PASSWORD') }}"
-      port: "{{ env_var('POSTGRES_PORT', 5432) }}"
-      dbname: "{{ env_var('POSTGRES_DB') }}"
-      schema: raw
-      threads: 4
-      keepalives_idle: 0
-      connect_timeout: 10
+      type: postgres  # Database type
+      host: "{{ env_var('POSTGRES_HOST') }}"  # Host from environment variable
+      user: "{{ env_var('POSTGRES_USER') }}"  # Username from environment variable
+      password: "{{ env_var('POSTGRES_PASSWORD') }}"  # Password from environment variable
+      port: "{{ env_var('POSTGRES_PORT', 5432) }}"  # Port with default 5432
+      dbname: "{{ env_var('POSTGRES_DB') }}"  # Database name from environment variable
+      schema: raw  # Default schema
+      threads: 4  # Number of threads for dbt
+      keepalives_idle: 0  # TCP keepalive
+      connect_timeout: 10  # Connection timeout in seconds

@@ -2,7 +2,7 @@ version: 2
 
 sources:
   - name: raw
-    database: "{{ env_var('POSTGRES_DB') }}"
+    database: "{{ env_var('POSTGRES_DB') }}"  # Use environment variable for database name
     schema: raw
     tables:
-      - name: raw_image_detections 
+      - name: raw_image_detections  # Table containing raw image detection results
